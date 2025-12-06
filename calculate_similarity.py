@@ -71,7 +71,7 @@ beta = 0.3
 sim_total = alpha * sim_bert + beta * sim_tfidf
 sim_total = sim_total.astype(np.float32)
 
-torch.save({"review_id": review_ids, "similarity_matrix": sim_total}, SAVE_SIM_PATH)
+torch.save({"review_ids": review_ids,"class_ids": class_ids, "similarity_matrix": sim_total}, SAVE_SIM_PATH)
 
 print(f"\nSaved similarity matrices to: {SAVE_SIM_PATH}")
 print("Done!")
