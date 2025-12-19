@@ -4,10 +4,10 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from pathlib import Path
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import tqdm
 from utils import *
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Set random seeds for reproducibility
 random.seed(42)
@@ -35,7 +35,11 @@ num_reviews = len(review_texts)
 num_classes = len(class_texts)
 
 print(f"Loaded {num_reviews} reviews and {num_classes} classes")
-
+# Vectorizing review corpus and classes using TF-IDF
+vectorizer = TfidfVectorizer(stop_words='english', max_features=20000)
+tfidf_review = vectorizer.fit_transform(review_texts)
+tfidf_class = vectorizer.transform(class_texts)
+sim_tfidf = cosine_similarity(tfidf_review, tfidf_class)
 # Loading SBERT embeddings
 review_data = torch.load(REVIEW_EMB_PATH)
 class_data = torch.load(CLASS_EMB_PATH)
@@ -47,30 +51,16 @@ class_emb = class_data["embeddings"]     # shape (C, 768)
 review_emb = F.normalize(review_emb, p=2, dim=1)
 class_emb = F.normalize(class_emb, p=2, dim=1)
 
-sim_bert = (review_emb @ class_emb.T).numpy()
-
-# Calculate TF-IDF similarity
-tfidf = TfidfVectorizer(max_features=50000)
-
-tfidf_review = tfidf.fit_transform(review_texts)
-tfidf_class = tfidf.transform(class_texts)
-
-sim_tfidf = cosine_similarity(tfidf_review, tfidf_class)
-
+sim_bert = (review_emb @ class_emb.T).cpu().numpy()
 def normalize(sim):
     sim_min, sim_max = sim.min(), sim.max()
     return (sim - sim_min) / (sim_max - sim_min + 1e-8)
 
-sim_bert = normalize(sim_bert)
 sim_tfidf = normalize(sim_tfidf)
+sim_bert = normalize(sim_bert)
 
-# Calculating the weighted similarity
-alpha = 0.7
-beta = 0.3
-
-sim_total = alpha * sim_bert + beta * sim_tfidf
-sim_total = sim_total.astype(np.float32)
-
-torch.save({"review_ids": review_ids,"class_ids": class_ids, "similarity_matrix": sim_total}, SAVE_SIM_PATH)
+alpha, beta = 0.7, 0.3
+ensemble_sim = alpha * sim_bert + beta * sim_tfidf
+torch.save({"review_ids": review_ids,"class_ids": class_ids, "similarity_matrix": ensemble_sim}, SAVE_SIM_PATH)
 
 print(f"\nSimilarity matrix saved successfully")
