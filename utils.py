@@ -44,9 +44,10 @@ def load_class_corpus(path: Path) -> Tuple[List[int], List[str]]:
         if len(parts) > 1:
             keywords = parts[1]
             kw_list = [kw.replace("_", " ") for kw in keywords.split(",")]
-            return f"{class_name}: {', '.join(kw_list)}."
+            kw_text = ", ".join(kw_list)
+            return f"This product category is {class_name}. Typical keywords include: {kw_text}. Review in this category describe products related to {class_name}."
         else:
-            return f"{class_name}."
+            return f"This product category is {class_name}."
 
     with open(path, 'r', encoding='utf-8') as f:
         for line in f:
