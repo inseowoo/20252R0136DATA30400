@@ -6,9 +6,8 @@ All pre-computed embeddings and model states are stored in google drive.
 
 How to reproduce results:
 1. Using the precomputed best_model.py
-   - run the evaluate_model.py to get the submission.csv file without running the whole project pipeline.
+   - Run the evaluate_model.py to get the submission.csv file without running the whole project pipeline.
   
 2. Running the whole pipeline:
-   - run the run.sh shellscript that sequentially executes each python file.
-   - chmod +x run.sh
-     ./run.sh
+   - Execute the run.py file that sequentially executes each python file.
+
