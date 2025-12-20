@@ -1,13 +1,37 @@
-Final Project for Big Data Analytics: DATA304
+# Final Project – Big Data Analytics (DATA304)
 
-All pre-computed embeddings and model states are stored in google drive.
-- Download the zip file from this link: https://drive.google.com/file/d/1U9soJmWcG0Zh1lwn6IJSaDkxPoMwxxvZ/view?usp=drive_link
-- Unzip the file in the main directory.
+Hierarchical Multi-Label Text Classification using only class names.
+The pipeline includes embedding generation, similarity computation,
+core class mining, GCN-based classifier training, and evaluation.
 
-How to reproduce results:
-1. Using the precomputed best_model.py
-   - Run the evaluate_model.py to get the submission.csv file without running the whole project pipeline.
-  
-2. Running the whole pipeline:
-   - Execute the run.py file that sequentially executes each python file.
+---
+
+## Precomputed Files (Required)
+
+All large `.pt` files (embeddings + trained model) are hosted on Google Drive.
+
+Download:
+https://drive.google.com/file/d/1U9soJmWcG0Zh1lwn6IJSaDkxPoMwxxvZ/view?usp=drive_link
+
+After downloading, unzip the file **in the project root directory**.
+
+---
+
+## Dependencies
+
+Install if needed:
+pip install torch numpy tqdm scikit-learn sentence-transformers
+
+---
+## Reproducing Results
+### Option 1: Using the pretrained model (Faster than running whole pipeline
+- Skips embedding computations and training process.
+- Uses the precomputed best_model.pt state
+- Execute: **python evaluate_model.py**
+- This generates submission.csv
+
+### Option 2: Running the full pipeline (From scratch)
+- Runs all steps sequentially (encode_embedding.py, calculate_similarity.py,
+  core_class_mining.py, classifier_training.py, evaluate_model.py)
+- Execute: **python run.py**
 
